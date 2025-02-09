@@ -71,3 +71,44 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+.builder-wrapper {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  max-height: calc(100vh - 57px - 57px);
+}
+
+.builder-container {
+  @apply flex flex-row h-full;
+}
+.builder-container > section {
+  @apply border-l p-5 overflow-auto;
+}
+
+.builder-container .fields {
+  flex: 0.2;
+}
+
+.builder-container .editor {
+  flex: 0.4;
+}
+
+.builder-container .preview-code {
+  flex: 0.4;
+  @apply border-r;
+}
+
+/* Filed drag styles */
+
+.field-drag-listing {
+  @apply flex flex-wrap gap-5;
+}
+
+.field-drag-item {
+  @apply py-2 text-sm px-3 border border-inherit rounded-sm cursor-move min-w-20 justify-center hover:bg-muted hover:border-primary bg-primary-foreground;
+}
+
+/* Editor styles */
+.editor .drop-area {
+  @apply grid place-content-center cursor-pointer min-h-20 bg-muted/80 border-2 rounded-sm border-dashed;
+}

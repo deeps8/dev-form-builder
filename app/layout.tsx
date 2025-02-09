@@ -51,11 +51,11 @@ export default function RootLayout({
 function HomeLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <div className="relative flex flex-col min-h-screen ">
-      <header className="sticky top-0 z-50 w-full border-b backdrop-blur">
+      <header className="sticky h-14 top-0 z-50 w-full border-b backdrop-blur">
         <Header />
       </header>
-      <main className="flex-1">
-        <div className="w-full h-full">{children}</div>
+      <main className="flex-1 flex flex-col">
+        <div className="w-full h-full flex-1 grid">{children}</div>
       </main>
       <footer className="border-t">
         <Footer />
