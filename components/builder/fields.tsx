@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { DragSOurce, FIELDS, FieldType } from "@/utils/builder/fields";
+import { DragSOurce, FieldDragData, FIELDS, FieldType } from "@/utils/builder/fields";
 import { useDraggable } from "@dnd-kit/core";
 import React, { ReactNode } from "react";
 
@@ -41,7 +41,7 @@ export function FieldDragWrap(props: FieldDragItemType) {
       id: `${props.field.type}.${props.idx}`,
       field: props.field,
       source: DragSOurce.SIDEBAR,
-    },
+    } as FieldDragData,
   });
 
   return (

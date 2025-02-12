@@ -14,7 +14,7 @@ function Footer() {
         </div>
         <div className="ml-auto">
           <p className="text-muted-foreground text-sm">
-            Made with ❤️ by
+            Made with ❤️ by{" "}
             <a
               href="#"
               className="text-primary font-bold underline decoration-wavy decoration-1 underline-offset-2"

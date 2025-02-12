@@ -1,6 +1,6 @@
 import { Active, Over } from "@dnd-kit/core";
 
-export const FIELDS: Record<string, FieldType> = {
+export const FIELDS = {
   input: { label: "Input", type: "input" },
   password: { label: "Password", type: "password" },
   select: { label: "Select", type: "select" },
@@ -32,7 +32,7 @@ export enum DragSOurce {
 export type FieldDragData = {
   index: number;
   id: string;
-  field: FieldType;
+  field: FieldType | EditorField;
   source: DragSOurce;
 };
 
@@ -40,7 +40,40 @@ export function GetActiveData(active: Active | Over) {
   return {
     data: (active?.data?.current || {}) as FieldDragData,
     id: active?.id || "",
+    index: active?.data?.current?.index || null,
   };
 }
 
-export type EditorFields = FieldType;
+export function GetOverData(over: Over) {
+  return {
+    data: over?.data?.current as DropAreaData,
+    id: over?.id || "",
+    index: over?.data?.current?.index || null,
+  };
+}
+
+export type EditorField = FieldType & {
+  id: string;
+  child: EditorField[][];
+};
+
+export type ParentId = string | null;
+export type DropAreaData = {
+  id: string;
+  index: number;
+  // parent: ParentId;
+  field?: FieldType;
+  position: "LOW" | "TOP";
+  sectionIdx: number;
+  // isContainer: boolean;
+  // containerIdx: number;
+};
+
+export function ChildInit(type: FieldName) {
+  switch (type) {
+    case "grid":
+      return [[], []];
+    default:
+      return [];
+  }
+}

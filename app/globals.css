@@ -82,7 +82,7 @@ body {
   @apply flex flex-row h-full;
 }
 .builder-container > section {
-  @apply border-l p-5 overflow-auto;
+  @apply border-l p-4 overflow-auto;
 }
 
 .builder-container .fields {
@@ -105,10 +105,28 @@ body {
 }
 
 .field-drag-item {
-  @apply py-2 text-sm px-3 border border-inherit rounded-sm cursor-move min-w-20 justify-center hover:bg-muted hover:border-primary bg-primary-foreground;
+  @apply py-2 text-sm px-4 border border-inherit rounded-sm cursor-move min-w-20 w-fit whitespace-nowrap justify-center hover:bg-muted hover:border-primary bg-primary-foreground;
 }
 
 /* Editor styles */
 .editor .drop-area {
   @apply grid place-content-center cursor-pointer min-h-20 bg-muted/80 border-2 rounded-sm border-dashed;
+}
+
+.editor .top-indicator::before {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  width: 100%;
+  left: 0;
+  @apply h-1 bg-primary rounded-full -top-2;
+}
+
+.editor .low-indicator::after {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  width: 100%;
+  left: 0;
+  @apply h-1 bg-primary rounded-full -bottom-2;
 }
