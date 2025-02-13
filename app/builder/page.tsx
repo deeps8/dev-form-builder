@@ -1,5 +1,5 @@
 import React from "react";
-import Builder from "./components/builder";
+import Builder from "../../components/builder/builder";
 
 export default function Page() {
   return (

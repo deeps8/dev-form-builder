@@ -61,12 +61,10 @@ export type ParentId = string | null;
 export type DropAreaData = {
   id: string;
   index: number;
-  // parent: ParentId;
   field?: FieldType;
   position: "LOW" | "TOP";
   sectionIdx: number;
-  // isContainer: boolean;
-  // containerIdx: number;
+  level: number;
 };
 
 export function ChildInit(type: FieldName) {

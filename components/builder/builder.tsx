@@ -3,6 +3,7 @@
 import Editor from "@/components/builder/editor";
 import Fields, { FieldDragItem } from "@/components/builder/fields";
 import PreviewCode from "@/components/builder/preview-code";
+import { useToast } from "@/hooks/use-toast";
 import {
   ChildInit,
   DragSOurce as DragSource,
@@ -25,7 +26,7 @@ import { useId, useState } from "react";
 export default function Builder() {
   const dndCtxId = useId();
   const [activeField, setActiveField] = useState<FieldDragData | null>(null);
-
+  const { toast } = useToast();
   const [data, updateData] = useState<EditorField[]>([]);
 
   const cleanUp = () => {
@@ -40,23 +41,22 @@ export default function Builder() {
   };
 
   // when the dragged item is over drop-area
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleDragOver = (e: DragOverEvent) => {
     // console.log({ e });
-    const { over, active } = e;
-    if (!over) {
-      return;
-    }
-
-    const overData = GetOverData(over);
-    const activeData = GetActiveData(active);
-
-    if (
-      activeData.data.field.type === "grid" &&
-      overData.data.field?.type === activeData.data.field.type
-    ) {
-      // cleanUp();
-      return;
-    }
+    // const { over, active } = e;
+    // if (!over) {
+    //   return;
+    // }
+    // const overData = GetOverData(over);
+    // const activeData = GetActiveData(active);
+    // if (activeData.data.field.type === "grid" && overData.data.level >= 0) {
+    //   setActiveField((prev) =>
+    //     prev ? { ...prev, field: { ...prev.field, label: "Not Allowed" } } : prev
+    //   );
+    // } else {
+    //   setActiveField(activeData.data);
+    // }
   };
 
   // when the item is dropped
@@ -74,11 +74,24 @@ export default function Builder() {
     const activeData = GetActiveData(active);
 
     // restrict the 2 level nesting of grid  items or self nesting
-    console.log({ overData, activeData });
-    // if (activeData.data.field.type === overData.data.field?.type) {
-    //   cleanUp();
-    //   return;
-    // }
+    console.log({ overData, activeData, level: overData.data.level });
+    if (activeData.data.field.type === "grid" && overData.data.level > 0) {
+      toast({
+        variant: "destructive",
+        title: "Nested Grid is not allowed",
+      });
+      cleanUp();
+      return;
+    }
+
+    if (overData.data.level > 1) {
+      toast({
+        variant: "destructive",
+        title: "Nested Grid is not allowed",
+      });
+      cleanUp();
+      return;
+    }
 
     if (activeData.data.source === DragSource.SIDEBAR) {
       const fieldItem: EditorField = {
@@ -122,9 +135,12 @@ export default function Builder() {
       // moving item in-between the editor or nested areas
       // console.log({ overData, activeData });
       const prevItem = activeData.data.field as EditorField;
+      const newItem: EditorField = { ...prevItem, id: nanoid(6) };
 
       if (overData.data.id === "" && overData.data.index === -1) {
-        updateData((d) => [...d, prevItem]);
+        const newItems = RemoveItem({ items: [...data], itemId: prevItem.id });
+        updateData([...newItems, newItem]);
+
         cleanUp();
         return;
       }
@@ -132,7 +148,6 @@ export default function Builder() {
       const dropIdx =
         overData.data.position === "TOP" ? overData.data.index : overData.data.index + 1;
 
-      const newItem: EditorField = { ...prevItem, id: nanoid(6) };
       setActiveField((prev) => {
         if (!prev) return prev;
         return { ...prev, field: newItem, id: newItem.id };
@@ -167,7 +182,7 @@ export default function Builder() {
         <Fields />
       </section>
       <section className="editor">
-        <Editor fields={data} editorId="BASE" />
+        <Editor fields={data} />
       </section>
       <section className="preview-code">
         <PreviewCode />
@@ -185,8 +200,5 @@ function DragOverlayItem({ activeData }: { activeData: FieldDragData | null }) {
     return <FieldDragItem {...activeData.field} />;
   } else if (activeData.source === DragSource.EDITOR) {
     return <FieldDragItem {...activeData.field} />;
-    // return (
-    //   <EditorFieldItem field={{ ...activeData.field, id: activeData.id, child: [] }} overlay />
-    // );
   } else return null;
 }
