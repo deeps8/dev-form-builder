@@ -5,14 +5,20 @@ import Fields, { FieldDragItem } from "@/components/builder/fields";
 import PreviewCode from "@/components/builder/preview-code";
 import { useToast } from "@/hooks/use-toast";
 import {
+  addStructItem,
+  insertNewItem,
+  moveEditorItems,
+  moveToBaseEditor,
+} from "@/store/builder/builder-slice";
+import { useAppDispatch } from "@/store/store";
+import {
   ChildInit,
-  DragSOurce as DragSource,
+  DragSource,
   EditorField,
   FieldDragData,
   GetActiveData,
   GetOverData,
 } from "@/utils/builder/fields";
-import { InsertMoveItem, RemoveItem } from "@/utils/builder/move-item";
 import {
   DndContext,
   DragEndEvent,
@@ -27,7 +33,7 @@ export default function Builder() {
   const dndCtxId = useId();
   const [activeField, setActiveField] = useState<FieldDragData | null>(null);
   const { toast } = useToast();
-  const [data, updateData] = useState<EditorField[]>([]);
+  const dispatch = useAppDispatch();
 
   const cleanUp = () => {
     setActiveField(null);
@@ -112,13 +118,12 @@ export default function Builder() {
       }
       // when item dropped to base editor
       if (overData.data.id === "" && overData.data.index === -1) {
-        updateData((d) => [...d, fieldItem]);
+        dispatch(addStructItem(fieldItem));
       } else {
         const dropIdx =
           overData.data.position === "TOP" ? overData.data.index : overData.data.index + 1;
         console.log("called nested drop");
         const props = {
-          items: [...data],
           insertItem: fieldItem,
           itemId: overData.data.id,
           idx: dropIdx,
@@ -126,8 +131,8 @@ export default function Builder() {
         };
         console.log({ props });
         // const newData = arrayMove<EditorField>([...d, fieldItem], d.length, dropIdx);
-        const newData = InsertMoveItem(props);
-        updateData([...newData]);
+        // const newData = InsertMoveItem(props);
+        dispatch(insertNewItem(props));
       }
     }
 
@@ -135,11 +140,11 @@ export default function Builder() {
       // moving item in-between the editor or nested areas
       // console.log({ overData, activeData });
       const prevItem = activeData.data.field as EditorField;
-      const newItem: EditorField = { ...prevItem, id: nanoid(6) };
+      const newItem: EditorField = { ...structuredClone(prevItem), id: nanoid(6) };
 
       if (overData.data.id === "" && overData.data.index === -1) {
-        const newItems = RemoveItem({ items: [...data], itemId: prevItem.id });
-        updateData([...newItems, newItem]);
+        // const newItems = RemoveItem({ items: [...data], itemId: prevItem.id });
+        dispatch(moveToBaseEditor({ insertItem: newItem, itemId: prevItem.id }));
 
         cleanUp();
         return;
@@ -153,7 +158,6 @@ export default function Builder() {
         return { ...prev, field: newItem, id: newItem.id };
       });
       const props = {
-        items: [...data],
         insertItem: newItem,
         itemId: overData.data.id,
         idx: dropIdx,
@@ -161,10 +165,13 @@ export default function Builder() {
       };
       console.log({ props });
       // const newItems = MoveItem({ ...props, insertItem: prevItem });
-      let newItems = InsertMoveItem(props);
-      newItems = RemoveItem({ items: [...newItems], itemId: prevItem.id });
+      // let newItems = InsertMoveItem(props);
+      // newItems = RemoveItem({ items: [...newItems], itemId: prevItem.id });
       // TODO: Updated the newItem id in config obj also
-      updateData([...newItems]);
+      // dispatch(
+      //   updateStructWithConfig({ struct: [...newItems], newId: newItem.id, prevId: prevItem.id })
+      // );
+      dispatch(moveEditorItems({ ...props, prevId: prevItem.id }));
     }
 
     cleanUp();
@@ -182,7 +189,7 @@ export default function Builder() {
         <Fields />
       </section>
       <section className="editor">
-        <Editor fields={data} />
+        <Editor />
       </section>
       <section className="preview-code">
         <PreviewCode />

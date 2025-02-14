@@ -24,7 +24,7 @@ export type FieldType = {
   type: FieldName;
 };
 
-export enum DragSOurce {
+export enum DragSource {
   SIDEBAR = "sidebar",
   EDITOR = "editor",
 }
@@ -33,7 +33,7 @@ export type FieldDragData = {
   index: number;
   id: string;
   field: FieldType | EditorField;
-  source: DragSOurce;
+  source: DragSource;
 };
 
 export function GetActiveData(active: Active | Over) {

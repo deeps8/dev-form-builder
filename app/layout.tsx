@@ -6,6 +6,7 @@ import { ThemeProvider } from "@/components/providers/theme-provider";
 import { Header } from "@/components/layouts/header";
 import Footer from "@/components/layouts/footer";
 import { Toaster } from "@/components/ui/toaster";
+import { StoreProvider } from "@/components/providers/store-provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -32,15 +33,17 @@ export default function RootLayout({
       <body
         className={cn("min-h-screen font-sans antialiased", geistSans.variable, geistMono.variable)}
       >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="light"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <HomeLayout>{children}</HomeLayout>
-          <Toaster />
-        </ThemeProvider>
+        <StoreProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="light"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <HomeLayout>{children}</HomeLayout>
+            <Toaster />
+          </ThemeProvider>
+        </StoreProvider>
       </body>
     </html>
   );

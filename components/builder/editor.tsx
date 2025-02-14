@@ -1,15 +1,13 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { DropAreaData, EditorField } from "@/utils/builder/fields";
+import { DropAreaData } from "@/utils/builder/fields";
 import { useDroppable } from "@dnd-kit/core";
 import { EditorFieldWrap } from "./editor/editor-field";
+import { useAppSelector } from "@/store/store";
 
-type EditorPropType = {
-  fields: EditorField[];
-};
-
-export default function Editor(props: EditorPropType) {
+export default function Editor() {
+  const editorStruct = useAppSelector((s) => s.builder.editorStruct);
   const id = `BASE__EDITOR`;
   const { isOver, setNodeRef } = useDroppable({
     id: id,
@@ -22,10 +20,13 @@ export default function Editor(props: EditorPropType) {
     } as DropAreaData,
   });
   return (
-    <div className="editor-wrapper h-full">
-      <div ref={setNodeRef} className="h-full z-[1] relative">
+    <div className="editor-wrapper h-full relative">
+      <div className={cn("dot grid place-content-center", isOver && "bg-muted/50")}>
+        {editorStruct.length === 0 && <p className="opacity-40">Drop here</p>}
+      </div>
+      <div ref={setNodeRef} className="h-full z-[1] relative p-4">
         <div className="space-y-3">
-          {props.fields.map((field, idx) => {
+          {editorStruct.map((field, idx) => {
             return (
               <EditorFieldWrap
                 field={field}
@@ -36,18 +37,6 @@ export default function Editor(props: EditorPropType) {
             );
           })}
         </div>
-        {props.fields.length === 0 && (
-          <div>
-            <div
-              className={cn(
-                "drop-area",
-                isOver && props.fields.length === 0 ? "border-primary" : ""
-              )}
-            >
-              <p className="opacity-20">Drop here</p>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );

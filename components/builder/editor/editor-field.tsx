@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { EditorField, DropAreaData, DragSOurce, FieldDragData } from "@/utils/builder/fields";
+import { EditorField, DropAreaData, DragSource, FieldDragData } from "@/utils/builder/fields";
 import { useDroppable, useDraggable } from "@dnd-kit/core";
 import { GripVertical } from "lucide-react";
 import { GridElement } from "./editor-grid-field";
@@ -46,7 +46,7 @@ export function EditorFieldWrap({ field, idx, level }: EditorFieldWrapPropType) 
       index: idx,
       id: field.id,
       field,
-      source: DragSOurce.EDITOR,
+      source: DragSource.EDITOR,
     } as FieldDragData,
   });
 

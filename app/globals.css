@@ -91,6 +91,7 @@ body {
 
 .builder-container .editor {
   flex: 0.4;
+  padding: 0;
 }
 
 .builder-container .preview-code {
@@ -129,4 +130,14 @@ body {
   width: 100%;
   left: 0;
   @apply h-1 bg-primary rounded-full -bottom-2;
+}
+
+.dot {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+  width: 100%;
+  z-index: -10;
+  background-image: radial-gradient(hsl(var(--muted-foreground) / 0.15) 1px, transparent 1px);
+  background-size: 16px 16px;
 }
