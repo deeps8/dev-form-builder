@@ -1,8 +1,12 @@
 import { cn } from "@/lib/utils";
 import { EditorField, DropAreaData, DragSource, FieldDragData } from "@/utils/builder/fields";
 import { useDroppable, useDraggable } from "@dnd-kit/core";
-import { GripVertical } from "lucide-react";
+import { Bolt, GripVertical, Trash } from "lucide-react";
 import { GridElement } from "./editor-grid-field";
+import { useAppDispatch } from "@/store/store";
+import { removeEditorItem } from "@/store/builder/builder-slice";
+import { useContext } from "react";
+import { EditorContext } from "@/components/providers/editor-provider";
 
 type EditorFieldWrapPropType = {
   field: EditorField;
@@ -99,7 +103,11 @@ export function EditorFieldItem({
       className="p-2 border min-h-11 rounded-sm text-center bg-background w-full text-sm"
       id={field.id}
     >
-      {!overlay && field.type === "grid" ? (
+      <div className="flex justify-between items-center">
+        <p>{field.label}</p>
+        <EditorFieldAction field={field} />
+      </div>
+      {!overlay && field.type === "grid" && (
         <div>
           <GridElement
             field={field}
@@ -112,9 +120,27 @@ export function EditorFieldItem({
             }}
           />
         </div>
-      ) : (
-        <p>{field.label}</p>
       )}
+    </div>
+  );
+}
+
+export function EditorFieldAction({ field }: { field: EditorField }) {
+  const dispatch = useAppDispatch();
+  const { openSetting } = useContext(EditorContext);
+
+  return (
+    <div className="z-[2] relative  editor-field-action">
+      <div className="flex flex-row gap-2">
+        {field.type !== "grid" && (
+          <button title="edit" onClick={() => openSetting(field)}>
+            <Bolt size={14} />
+          </button>
+        )}
+        <button title="delete" onClick={() => dispatch(removeEditorItem({ id: field.id }))}>
+          <Trash size={14} />
+        </button>
+      </div>
     </div>
   );
 }

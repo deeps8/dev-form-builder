@@ -14,15 +14,18 @@ export type FieldConfig = {
   type: FieldName;
   label: string;
   name: string;
-  value: GeneralValue;
   disabled: boolean;
   checked: boolean;
+  options?: LabelValue[];
+  readonly?: boolean;
   required?: boolean;
   description?: string;
   placeholder?: string;
-  min?: number;
-  max?: number;
-  step?: number;
+  min?: number | "";
+  max?: number | "";
+  step?: number | "";
+  multiselect?: boolean;
+  inputType?: string;
   className?: string;
 };
 
@@ -33,4 +36,9 @@ export type EditorConfig = {
 export type BuilderDataType = {
   editorStruct: EditorStruct;
   editorConfig: EditorConfig;
+};
+
+export type LabelValue = {
+  label: string;
+  value: string;
 };

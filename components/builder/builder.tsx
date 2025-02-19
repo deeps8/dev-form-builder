@@ -80,7 +80,6 @@ export default function Builder() {
     const activeData = GetActiveData(active);
 
     // restrict the 2 level nesting of grid  items or self nesting
-    console.log({ overData, activeData, level: overData.data.level });
     if (activeData.data.field.type === "grid" && overData.data.level > 0) {
       toast({
         variant: "destructive",
@@ -122,14 +121,12 @@ export default function Builder() {
       } else {
         const dropIdx =
           overData.data.position === "TOP" ? overData.data.index : overData.data.index + 1;
-        console.log("called nested drop");
         const props = {
           insertItem: fieldItem,
           itemId: overData.data.id,
           idx: dropIdx,
           secIdx: overData.data.sectionIdx,
         };
-        console.log({ props });
         // const newData = arrayMove<EditorField>([...d, fieldItem], d.length, dropIdx);
         // const newData = InsertMoveItem(props);
         dispatch(insertNewItem(props));
@@ -163,7 +160,6 @@ export default function Builder() {
         idx: dropIdx,
         secIdx: overData.data.sectionIdx,
       };
-      console.log({ props });
       // const newItems = MoveItem({ ...props, insertItem: prevItem });
       // let newItems = InsertMoveItem(props);
       // newItems = RemoveItem({ items: [...newItems], itemId: prevItem.id });

@@ -106,7 +106,7 @@ body {
 }
 
 .field-drag-item {
-  @apply py-2 text-sm px-4 border border-inherit rounded-sm cursor-move min-w-20 w-fit whitespace-nowrap justify-center hover:bg-muted hover:border-primary bg-primary-foreground;
+  @apply py-2 text-sm px-4 border border-inherit rounded-sm cursor-move min-w-20 w-fit whitespace-nowrap justify-center hover:bg-muted hover:border-primary;
 }
 
 /* Editor styles */
@@ -140,4 +140,8 @@ body {
   z-index: -10;
   background-image: radial-gradient(hsl(var(--muted-foreground) / 0.15) 1px, transparent 1px);
   background-size: 16px 16px;
+}
+
+.editor .editor-field-action button {
+  @apply p-1 text-muted-foreground/40 hover:text-muted-foreground;
 }

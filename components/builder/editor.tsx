@@ -5,6 +5,7 @@ import { DropAreaData } from "@/utils/builder/fields";
 import { useDroppable } from "@dnd-kit/core";
 import { EditorFieldWrap } from "./editor/editor-field";
 import { useAppSelector } from "@/store/store";
+import { EditorProvider } from "../providers/editor-provider";
 
 export default function Editor() {
   const editorStruct = useAppSelector((s) => s.builder.editorStruct);
@@ -20,24 +21,24 @@ export default function Editor() {
     } as DropAreaData,
   });
   return (
-    <div className="editor-wrapper h-full relative">
-      <div className={cn("dot grid place-content-center", isOver && "bg-muted/50")}>
-        {editorStruct.length === 0 && <p className="opacity-40">Drop here</p>}
-      </div>
-      <div ref={setNodeRef} className="h-full z-[1] relative p-4">
-        <div className="space-y-3">
-          {editorStruct.map((field, idx) => {
-            return (
-              <EditorFieldWrap
-                field={field}
-                idx={idx}
-                level={0}
-                key={`${field.type}.${idx}.${field.id}`}
-              />
-            );
-          })}
+    <EditorProvider>
+      <div className="editor-wrapper h-full relative">
+        <div className={cn("dot grid place-content-center", isOver && "bg-muted/50")} />
+        <div ref={setNodeRef} className="h-full z-[1] relative p-4">
+          <div className="space-y-3">
+            {editorStruct.map((field, idx) => {
+              return (
+                <EditorFieldWrap
+                  field={field}
+                  idx={idx}
+                  level={0}
+                  key={`${field.type}.${idx}.${field.id}`}
+                />
+              );
+            })}
+          </div>
         </div>
       </div>
-    </div>
+    </EditorProvider>
   );
 }

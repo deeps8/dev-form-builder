@@ -9,9 +9,7 @@ export default function Fields() {
   return (
     <div>
       <div>
-        <p className="text-muted-foreground text-sm">
-          Drag fields from here or just add them by a click.
-        </p>
+        <p className="text-muted-foreground text-sm">Drag fields from here to editor.</p>
         <section className="field-drag-listing my-4">
           {Object.values(FIELDS).map((field, idx) => {
             return (
@@ -33,13 +31,13 @@ type FieldDragItemType = {
   children: ReactNode;
 };
 
-export function FieldDragWrap(props: FieldDragItemType) {
+export function FieldDragWrap({ field, idx, children }: FieldDragItemType) {
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
-    id: `${props.field.type}.${props.idx}`,
+    id: `${field.type}.${idx}`,
     data: {
-      index: props.idx,
-      id: `${props.field.type}.${props.idx}`,
-      field: props.field,
+      index: idx,
+      id: `${field.type}.${idx}`,
+      field: field,
       source: DragSource.SIDEBAR,
     } as FieldDragData,
   });
@@ -47,19 +45,19 @@ export function FieldDragWrap(props: FieldDragItemType) {
   return (
     <div
       ref={setNodeRef}
-      key={props.field.type + props.idx}
+      key={field.type + idx}
       {...attributes}
       {...listeners}
       className={cn(isDragging ? "opacity-60 bg-muted border-primary/80" : "")}
     >
-      {props.children}
+      {children}
     </div>
   );
 }
 
 export function FieldDragItem(field: FieldType) {
   return (
-    <div className="field-drag-item flex gap-2 items-center">
+    <div className="field-drag-item flex gap-1 items-center">
       <p>{field.label}</p>
     </div>
   );

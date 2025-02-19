@@ -1,4 +1,5 @@
 import { EditorField } from "./fields";
+import { EditorConfig } from "./types";
 
 export type MoveItemPropType = {
   items: EditorField[];
@@ -32,18 +33,28 @@ export function InsertMoveItem({ items, insertItem, itemId, idx, secIdx = 0 }: M
   return items;
 }
 
-export function RemoveItem({ items, itemId }: Pick<MoveItemPropType, "items" | "itemId">) {
+export function RemoveItem({
+  items,
+  itemId,
+  delItem,
+}: Pick<MoveItemPropType, "items" | "itemId"> & { delItem: EditorField }) {
   for (let i = 0; i < items.length; i++) {
     if (items[i].id === itemId) {
-      items.splice(i, 1);
-      return items;
+      delItem = items.splice(i, 1)[0];
+      return { items, delItem };
     } else {
       for (let j = 0; j < items[i].child.length; j++) {
-        items[i].child[j] = RemoveItem({ items: items[i].child[j], itemId });
+        const { items: newItems, delItem: di } = RemoveItem({
+          items: items[i].child[j],
+          itemId,
+          delItem,
+        });
+        items[i].child[j] = newItems;
+        delItem = di;
       }
     }
   }
-  return items;
+  return { items, delItem };
 }
 
 export function MoveItem({ items, insertItem, itemId, idx }: MoveItemPropType) {
@@ -71,4 +82,19 @@ function arrayMove<T>(array: T[], from: number, to: number): T[] {
     newArray.splice(to - 1, 0, removed);
   }
   return newArray;
+}
+
+type RemoveConfigType = {
+  config: EditorConfig;
+  item: EditorField[];
+};
+
+export function RemoveConfig({ config, item }: RemoveConfigType) {
+  for (let i = 0; i < item.length; i++) {
+    delete config[item[i].id];
+    for (let j = 0; j < item[i].child.length; j++) {
+      config = RemoveConfig({ config, item: item[i].child[j] });
+    }
+  }
+  return config;
 }
