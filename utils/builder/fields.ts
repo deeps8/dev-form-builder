@@ -12,7 +12,6 @@ export const FIELDS = {
   date: { label: "Date Picker", type: "date" },
   rating: { label: "Rating", type: "rating" },
   slider: { label: "Slider", type: "slider" },
-  button: { label: "Button", type: "button" },
   grid: { label: "Grid", type: "grid" },
   otp: { label: "Input OTP", type: "otp" },
 } as const;

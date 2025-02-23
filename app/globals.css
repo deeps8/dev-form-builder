@@ -145,3 +145,14 @@ body {
 .editor .editor-field-action button {
   @apply p-1 text-muted-foreground/40 hover:text-muted-foreground;
 }
+
+
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}

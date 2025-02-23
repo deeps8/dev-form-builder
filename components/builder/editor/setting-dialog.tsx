@@ -1,5 +1,6 @@
 "use client";
 
+import { EditorContext } from "@/components/providers/editor-provider";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -26,16 +27,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { updateConfig } from "@/store/builder/builder-slice";
+import { useAppDispatch } from "@/store/store";
 import { ShouldShow } from "@/utils/builder/schema-gen";
 
 import { FieldConfig } from "@/utils/builder/types";
 import { X } from "lucide-react";
+import { useContext } from "react";
 import { useFieldArray, useForm, useFormContext } from "react-hook-form";
 type DialogSetting = {
   config: FieldConfig;
 };
 
 export default function DialogSetting({ config }: DialogSetting) {
+  const dispatch = useAppDispatch();
+  const { closeSetting } = useContext(EditorContext);
   const form = useForm<FieldConfig>({
     defaultValues: config,
     mode: "onBlur",
@@ -46,6 +52,8 @@ export default function DialogSetting({ config }: DialogSetting) {
 
   const onSubmit = (data: FieldConfig) => {
     console.log({ data });
+    dispatch(updateConfig(data));
+    closeSetting();
   };
 
   return (
@@ -112,7 +120,7 @@ export default function DialogSetting({ config }: DialogSetting) {
                 )}
               />
             )}
-            {/* <FormField
+            <FormField
               control={form.control}
               name="description"
               render={({ field }) => (
@@ -123,7 +131,7 @@ export default function DialogSetting({ config }: DialogSetting) {
                   </FormControl>
                 </FormItem>
               )}
-            /> */}
+            />
             {ShouldShow(config.type, "inputType") && (
               <FormField
                 control={form.control}
@@ -285,7 +293,12 @@ export function LabelValueArrayInput() {
   const { append, fields, remove } = useFieldArray<FieldConfig>({
     name: "options",
     control,
-    rules: { validate: { maxFields: (v) => (v.length <= 15 ? true : "Max length 15") } },
+    rules: {
+      validate: {
+        maxFields: (v) => (v.length <= 15 ? true : "Max length 15"),
+        minFields: (v) => (v.length >= 1 ? true : "Min length 1"),
+      },
+    },
   });
 
   return (

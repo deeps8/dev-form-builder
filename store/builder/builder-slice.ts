@@ -6,7 +6,7 @@ import {
   RemoveItem,
 } from "@/utils/builder/move-item";
 import { NewFieldConfig } from "@/utils/builder/schema-gen";
-import { BuilderDataType } from "@/utils/builder/types";
+import { BuilderDataType, FieldConfig } from "@/utils/builder/types";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export const BuilderData: BuilderDataType = {
@@ -95,10 +95,20 @@ export const BuilderSlice = createSlice({
       }
       return state;
     },
+    updateConfig: (state, action: PayloadAction<FieldConfig>) => {
+      const fieldConfig = action.payload;
+      state.editorConfig[fieldConfig.id] = fieldConfig;
+    },
   },
 });
 
-export const { addStructItem, insertNewItem, moveEditorItems, moveToBaseEditor, removeEditorItem } =
-  BuilderSlice.actions;
+export const {
+  addStructItem,
+  insertNewItem,
+  moveEditorItems,
+  moveToBaseEditor,
+  removeEditorItem,
+  updateConfig,
+} = BuilderSlice.actions;
 const builderReducer = BuilderSlice.reducer;
 export default builderReducer;
