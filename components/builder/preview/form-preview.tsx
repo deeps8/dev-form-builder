@@ -12,11 +12,14 @@ import { EditorField } from "@/utils/builder/fields";
 import { FieldConfig } from "@/utils/builder/types";
 import {
   CheckboxField,
+  ComboboxField,
   DatePickerField,
+  FileInputField,
   InputField,
   OTPfield,
   PasswordField,
   RadioField,
+  RatingField,
   SelectField,
   SliderField,
   SwitchField,
@@ -33,7 +36,7 @@ export default function FormPreview() {
   const form = useForm<SchemaType>({
     resolver: zodResolver(formZodSchema),
     defaultValues: GenDefaultValues(editorConfig),
-    mode: "onBlur",
+    mode: "all",
     shouldFocusError: true,
     criteriaMode: "firstError",
     reValidateMode: "onSubmit",
@@ -57,7 +60,7 @@ export default function FormPreview() {
   if (editorStruct.length === 0) return null;
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 px-4">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2 px-4">
         {editorStruct.map((es) => (
           <RenderField key={es.id} es={es} form={form} config={editorConfig[es.id]} />
         ))}
@@ -93,11 +96,13 @@ function RenderField({ es, config, form }: RenderFieldPropType) {
     case "switch":
       return <SwitchField config={config} form={form} />;
     case "fileinput":
-    // TODO: create it.
+      return <FileInputField config={config} form={form} />;
     case "rating":
-    // TODO: create it.
+      return <RatingField config={config} form={form} />;
     case "slider":
       return <SliderField config={config} form={form} />;
+    case "combobox":
+      return <ComboboxField config={config} form={form} />;
     case "grid":
       return (
         <div key={es.id} className="grid grid-cols-2 gap-5">

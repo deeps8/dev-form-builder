@@ -14,6 +14,7 @@ export const FIELDS = {
   slider: { label: "Slider", type: "slider" },
   grid: { label: "Grid", type: "grid" },
   otp: { label: "Input OTP", type: "otp" },
+  combobox: { label: "Combobox", type: "combobox" },
 } as const;
 
 export type FieldName = keyof typeof FIELDS;

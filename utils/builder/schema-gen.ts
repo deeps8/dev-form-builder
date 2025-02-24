@@ -45,7 +45,7 @@ export function NewFieldConfig(item: EditorField) {
 export function ShouldShow(type: FieldName, field: SettingFieldKeys) {
   const show: Record<SettingFieldKeys, FieldName[]> = {
     checked: ["checkbox", "switch"],
-    options: ["select", "radio"],
+    options: ["select", "radio", "combobox"],
     readonly: ["input", "date", "password", "textarea"],
     required: [
       "checkbox",
@@ -60,12 +60,13 @@ export function ShouldShow(type: FieldName, field: SettingFieldKeys) {
       "textarea",
       "slider",
       "switch",
+      "combobox",
     ],
-    placeholder: ["input", "password", "textarea", "select"],
-    min: ["input", "password", "textarea", "slider"],
-    max: ["input", "password", "textarea", "slider", "otp"],
+    placeholder: ["input", "password", "textarea", "select", "combobox"],
+    min: ["input", "password", "textarea", "slider", "rating"],
+    max: ["input", "password", "textarea", "slider", "otp", "rating"],
     step: ["slider"],
-    multiselect: ["select"],
+    multiselect: ["fileinput"],
     inputType: ["input"],
   };
 
@@ -83,6 +84,10 @@ export function GenZodSchema(config: EditorConfig) {
         fieldSchema = z.string();
         break;
       case "select":
+        if (fc.multiselect) fieldSchema = z.array(z.string());
+        else fieldSchema = z.string();
+        break;
+      case "combobox":
         if (fc.multiselect) fieldSchema = z.array(z.string());
         else fieldSchema = z.string();
         break;
@@ -104,7 +109,7 @@ export function GenZodSchema(config: EditorConfig) {
         break;
       case "fileinput":
         fieldSchema = z
-          .custom<FileList>((files) => files instanceof FileList && files.length > 0, {
+          .custom<FileList>((files) => files && files.length > 0, {
             message: "At least one file is required",
           })
           .refine((files) => Array.from(files).every((file) => file.size <= MAX_FILE_SIZE), {
@@ -192,12 +197,13 @@ export const GenDefaultValues = (config: EditorConfig): Record<string, any> => {
     radio: "",
     textarea: "",
     switch: false,
-    fileinput: "",
+    fileinput: [],
     date: new Date(),
     rating: 0,
     slider: 10,
     otp: "",
     grid: undefined,
+    combobox: "",
   };
 
   for (const fc of configArray) {

@@ -3,6 +3,14 @@ import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import {
   FormControl,
   FormDescription,
   FormField,
@@ -12,8 +20,9 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
-import { Popover, PopoverTrigger } from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Rating } from "@/components/ui/rating";
 import {
   Select,
   SelectContent,
@@ -26,10 +35,9 @@ import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { FieldConfig } from "@/utils/builder/types";
-import { PopoverContent } from "@radix-ui/react-popover";
 import { format } from "date-fns";
 import { REGEXP_ONLY_DIGITS_AND_CHARS } from "input-otp";
-import { CalendarIcon, Eye, EyeClosed } from "lucide-react";
+import { CalendarIcon, Check, ChevronsUpDown, Eye, EyeClosed, Trash } from "lucide-react";
 import { useMemo, useState } from "react";
 import { UseFormReturn } from "react-hook-form";
 
@@ -131,7 +139,7 @@ function SelectField({ config, form }: FieldPropType) {
             </FormControl>
             {config.options && (
               <SelectContent>
-                {config.options.map((op, idx) => (
+                {config.options?.map((op, idx) => (
                   <SelectItem key={op.value + idx} value={op.value}>
                     {op.label}
                   </SelectItem>
@@ -371,6 +379,153 @@ function RadioField({ config, form }: FieldPropType) {
   );
 }
 
+function RatingField({ config, form }: FieldPropType) {
+  return (
+    <FormField
+      control={form.control}
+      name={config.name}
+      defaultValue={0}
+      render={({ field }) => (
+        <FormItem>
+          <FormLabel>{config.label}</FormLabel>
+          <FormControl>
+            <Rating
+              value={field.value}
+              onChange={field.onChange}
+              className={cn(config.className)}
+              readOnly={config.disabled}
+              max={config.max ? Number(config.max) : 5}
+            />
+          </FormControl>
+          {config.description && <FormDescription>{config.description}</FormDescription>}
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  );
+}
+
+function FileInputField({ config, form }: FieldPropType) {
+  const removeFile = (idx: any) => {
+    const values: File[] = form.getValues(config.name);
+    values.splice(idx, 1);
+    form.setValue(config.name, values);
+  };
+  return (
+    <FormField
+      control={form.control}
+      name={config.name}
+      defaultValue={[]}
+      render={({ field }) => {
+        // console.log({ value: field.value });
+        return (
+          <FormItem>
+            <FormLabel>{config.label}</FormLabel>
+            <FormControl>
+              <Input
+                placeholder={config.placeholder}
+                disabled={config.disabled}
+                readOnly={config.readonly}
+                type="file"
+                className={cn(config.className)}
+                multiple={config.multiselect}
+                value={[]}
+                onChange={(v) => {
+                  if (v.target.files) {
+                    console.log({ files: v.target.files });
+                    field.onChange(Array.from(v.target.files));
+                  }
+                }}
+              />
+            </FormControl>
+            {config.description && <FormDescription>{config.description}</FormDescription>}
+            <div>
+              {(field.value as File[]).map((f, idx) => (
+                <div
+                  key={idx}
+                  className="flex justify-between text-sm border-b py-1 text-muted-foreground/95"
+                >
+                  <p>{f.name}</p>
+                  <button type="button" onClick={() => removeFile(idx)}>
+                    <Trash size={14} className="text-muted-foreground/50" />
+                  </button>
+                </div>
+              ))}
+              <FormMessage />
+            </div>
+          </FormItem>
+        );
+      }}
+    />
+  );
+}
+
+function ComboboxField({ config, form }: FieldPropType) {
+  const [open, setOpen] = useState(false);
+  return (
+    <FormField
+      control={form.control}
+      name={config.name}
+      defaultValue={""}
+      render={({ field }) => (
+        <FormItem className="flex flex-col">
+          <FormLabel>{config.label}</FormLabel>
+          <Button
+            type="button"
+            variant="outline"
+            role="combobox"
+            disabled={config.disabled}
+            onClick={() => setOpen((prev) => !prev)}
+            className={cn("w-full justify-between", !field.value && "text-muted-foreground")}
+          >
+            {field.value
+              ? config.options?.find((op) => op.value === field.value)?.label
+              : config.placeholder}
+            <ChevronsUpDown className="opacity-50 ml-auto" />
+          </Button>
+          <FormControl>
+            <div>
+              <div className="relative">
+                {open ? (
+                  <div className="mt-2 animate-in rounded-md border border-input fade-in-0 zoom-in-95 absolute top-0 z-10 w-full outline-none bg-popover text-popover-foreground">
+                    <Command>
+                      <CommandInput placeholder="Search..." className="h-9" />
+                      <CommandList>
+                        <CommandEmpty>Not found.</CommandEmpty>
+                        <CommandGroup>
+                          {config.options?.map((op) => (
+                            <CommandItem
+                              value={op.label}
+                              key={op.value}
+                              onSelect={() => {
+                                field.onChange(op.value);
+                              }}
+                            >
+                              {op.label}
+                              <Check
+                                className={cn(
+                                  "ml-auto",
+                                  op.value === field.value ? "opacity-100" : "opacity-0"
+                                )}
+                              />
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  </div>
+                ) : null}
+              </div>
+            </div>
+          </FormControl>
+          {config.description && <FormDescription>{config.description}</FormDescription>}
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  );
+}
+
 export {
   InputField,
   PasswordField,
@@ -382,4 +537,7 @@ export {
   OTPfield,
   DatePickerField,
   RadioField,
+  RatingField,
+  FileInputField,
+  ComboboxField,
 };
