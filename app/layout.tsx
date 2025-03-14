@@ -5,6 +5,8 @@ import { cn } from "@/lib/utils";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { Header } from "@/components/layouts/header";
 import Footer from "@/components/layouts/footer";
+import { Toaster } from "@/components/ui/toaster";
+import { StoreProvider } from "@/components/providers/store-provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,20 +31,19 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning={true}>
       <body
-        className={cn(
-          "min-h-screen font-sans antialiased",
-          geistSans.variable,
-          geistMono.variable
-        )}
+        className={cn("min-h-screen font-sans antialiased", geistSans.variable, geistMono.variable)}
       >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="light"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <HomeLayout>{children}</HomeLayout>
-        </ThemeProvider>
+        <StoreProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="light"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <HomeLayout>{children}</HomeLayout>
+            <Toaster />
+          </ThemeProvider>
+        </StoreProvider>
       </body>
     </html>
   );
@@ -51,11 +52,11 @@ export default function RootLayout({
 function HomeLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <div className="relative flex flex-col min-h-screen ">
-      <header className="sticky top-0 z-50 w-full border-b backdrop-blur">
+      <header className="sticky h-14 top-0 z-50 w-full border-b backdrop-blur">
         <Header />
       </header>
-      <main className="flex-1">
-        <div className="w-full h-full">{children}</div>
+      <main className="flex-1 flex flex-col">
+        <div className="w-full h-full flex-1 grid">{children}</div>
       </main>
       <footer className="border-t">
         <Footer />

@@ -71,3 +71,88 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+.builder-wrapper {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  max-height: calc(100vh - 57px - 57px);
+}
+
+.builder-container {
+  @apply flex flex-row h-full;
+}
+.builder-container > section {
+  @apply border-l p-4 overflow-auto;
+}
+
+.builder-container .fields {
+  flex: 0.2;
+}
+
+.builder-container .editor {
+  flex: 0.4;
+  padding: 0;
+}
+
+.builder-container .preview-code {
+  flex: 0.4;
+  @apply border-r;
+}
+
+/* Filed drag styles */
+
+.field-drag-listing {
+  @apply flex flex-wrap gap-5;
+}
+
+.field-drag-item {
+  @apply py-2 text-sm px-4 border border-inherit rounded-sm cursor-move min-w-20 w-fit whitespace-nowrap justify-center hover:bg-muted hover:border-primary;
+}
+
+/* Editor styles */
+.editor .drop-area {
+  @apply grid place-content-center cursor-pointer min-h-20 bg-muted/80 border-2 rounded-sm border-dashed;
+}
+
+.editor .top-indicator::before {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  width: 100%;
+  left: 0;
+  @apply h-1 bg-primary rounded-full -top-2;
+}
+
+.editor .low-indicator::after {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  width: 100%;
+  left: 0;
+  @apply h-1 bg-primary rounded-full -bottom-2;
+}
+
+.dot {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+  width: 100%;
+  z-index: -10;
+  background-image: radial-gradient(hsl(var(--muted-foreground) / 0.15) 1px, transparent 1px);
+  background-size: 16px 16px;
+}
+
+.editor .editor-field-action button {
+  @apply p-1 text-muted-foreground/40 hover:text-muted-foreground;
+}
+
+
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
